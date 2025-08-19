@@ -1,6 +1,6 @@
 # Royal Silver Mines
 
-![game|200](resources/game.png)
+<img src="resources/game.png" width="400">
 
 2D top-down rpg simulator inspired by Dwarf Fortress, simplified.
 Built for the PicoSystem, Linux and Windows using 32blit.
