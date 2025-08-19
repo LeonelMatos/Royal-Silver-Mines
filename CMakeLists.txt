@@ -5,7 +5,18 @@ cmake_minimum_required(VERSION 3.10)
 project(ROYAL-SILVER-MINES)
 
 # Add your sources here (adding headers is optional, but helps some CMake generators)
-set(PROJECT_SOURCE game.cpp game.hpp)
+set(PROJECT_SOURCE 
+    src/camera.cpp
+    src/camera.hpp
+    src/game.cpp
+    src/game.hpp
+    src/map.cpp
+    src/map.hpp
+    src/tiles.cpp
+    src/tiles.hpp
+    src/ui.cpp
+    src/ui.hpp
+    )
 
 # ... and any other files you want in the release here
 set(PROJECT_DISTRIBS LICENSE README.md)
