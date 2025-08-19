@@ -44,6 +44,7 @@ void render(uint32_t time) {
     }
 
     draw_ui(world_map, cam);    
+    draw_input_debug();
 }
 
 void update(uint32_t time) {
