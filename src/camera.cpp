@@ -2,7 +2,7 @@
 
 namespace game {
 
-Camera::Camera(int vw, int vh) : x(0), y(0), view_w(vw), view_h(vh) {}
+Camera::Camera(int vw, int vh) : x(0), y(0), view_w(vw), view_h(vh), speed(2.0f) {}
 
 void Camera::move(float dx, float dy, int map_px_w, int map_px_h) {
     x += dx;

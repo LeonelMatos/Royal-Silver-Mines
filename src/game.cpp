@@ -30,6 +30,7 @@ void init() {
 }
 
 void render(uint32_t time) {
+const float speed = 2.0f;
     screen.pen = Pen(0,0,0);
     screen.clear();
 
@@ -53,17 +54,16 @@ void render(uint32_t time) {
 
 void update(uint32_t time) {
     //camera pan with D-pad
-    const float speed = 2.0f;
-    if (!MENU_OPEN) {
-        if(pressed(Button::DPAD_LEFT))  cam.move(-speed, 0, world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
-        if(pressed(Button::DPAD_RIGHT)) cam.move(speed, 0,  world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
-        if(pressed(Button::DPAD_UP))    cam.move(0, -speed, world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
-        if(pressed(Button::DPAD_DOWN))  cam.move(0, speed,  world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
+    if (CURRENT_MENU == MenuState::None) {
+        if(pressed(Button::DPAD_LEFT))  cam.move(-cam.speed, 0, world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
+        if(pressed(Button::DPAD_RIGHT)) cam.move(cam.speed, 0,  world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
+        if(pressed(Button::DPAD_UP))    cam.move(0, -cam.speed, world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
+        if(pressed(Button::DPAD_DOWN))  cam.move(0, cam.speed,  world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
+        
+        if(buttons.pressed & Button::Y) {
+            show_logs = !show_logs;
+            CURRENT_MENU = MenuState::Logs;
+        }
+        if(show_logs) game::handle_log_input();
     }
-
-    if(buttons.pressed & Button::Y) {
-        show_logs = !show_logs;
-        MENU_OPEN = !MENU_OPEN;
-    }
-    if(show_logs) game::handle_log_input();
 }
