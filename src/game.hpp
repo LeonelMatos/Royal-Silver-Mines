@@ -3,6 +3,7 @@
 
 //Global debug flag
 inline constexpr bool DEBUG = true;
+inline bool MENU_OPEN = false;
 
 void init();
 void update(uint32_t time);

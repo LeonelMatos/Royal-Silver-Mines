@@ -10,12 +10,16 @@ set(PROJECT_SOURCE
     src/camera.hpp
     src/game.cpp
     src/game.hpp
+    src/logs.cpp
+    src/logs.hpp
     src/map.cpp
     src/map.hpp
     src/tiles.cpp
     src/tiles.hpp
     src/ui.cpp
     src/ui.hpp
+    src/logs.cpp
+    src/logs.hpp
     )
 
 # ... and any other files you want in the release here

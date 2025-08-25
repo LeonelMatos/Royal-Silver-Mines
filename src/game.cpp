@@ -3,6 +3,7 @@
 #include "camera.hpp"
 #include "tiles.hpp"
 #include "ui.hpp"
+#include "logs.hpp"
 
 using namespace blit;
 
@@ -22,12 +23,16 @@ void init() {
     cam.x = (world_map.width / 2) * TILE_SIZE - cam.view_w / 2;
     cam.y = 0;
     
+
+    game::add_log("Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. " \
+        "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos." \
+    "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.");
 }
 
 void render(uint32_t time) {
     screen.pen = Pen(0,0,0);
     screen.clear();
-    
+
     // compute visible tile bounds
     int tx0 = cam.x / TILE_SIZE;
     int ty0 = cam.y / TILE_SIZE;
@@ -49,8 +54,16 @@ void render(uint32_t time) {
 void update(uint32_t time) {
     //camera pan with D-pad
     const float speed = 2.0f;
-    if(pressed(Button::DPAD_LEFT))  cam.move(-speed, 0, world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
-    if(pressed(Button::DPAD_RIGHT)) cam.move(speed, 0,  world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
-    if(pressed(Button::DPAD_UP))    cam.move(0, -speed, world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
-    if(pressed(Button::DPAD_DOWN))  cam.move(0, speed,  world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
+    if (!MENU_OPEN) {
+        if(pressed(Button::DPAD_LEFT))  cam.move(-speed, 0, world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
+        if(pressed(Button::DPAD_RIGHT)) cam.move(speed, 0,  world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
+        if(pressed(Button::DPAD_UP))    cam.move(0, -speed, world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
+        if(pressed(Button::DPAD_DOWN))  cam.move(0, speed,  world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
+    }
+
+    if(buttons.pressed & Button::Y) {
+        show_logs = !show_logs;
+        MENU_OPEN = !MENU_OPEN;
+    }
+    if(show_logs) game::handle_log_input();
 }

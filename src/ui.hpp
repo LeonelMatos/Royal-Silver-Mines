@@ -7,4 +7,5 @@ namespace game {
     void draw_ui(const Map &map, const Camera &cam);
 
     void draw_input_debug();
+    void draw_logs();
 }
