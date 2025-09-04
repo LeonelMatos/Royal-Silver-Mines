@@ -24,13 +24,13 @@ void init() {
     cam.y = 0;
     
 
-    game::add_log("Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. " \
+    /*game::add_log("Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. " \
         "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos." \
     "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.");
+*/
 }
 
 void render(uint32_t time) {
-const float speed = 2.0f;
     screen.pen = Pen(0,0,0);
     screen.clear();
 
@@ -60,10 +60,18 @@ void update(uint32_t time) {
         if(pressed(Button::DPAD_UP))    cam.move(0, -cam.speed, world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
         if(pressed(Button::DPAD_DOWN))  cam.move(0, cam.speed,  world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
         
-        if(buttons.pressed & Button::Y) {
-            show_logs = !show_logs;
+    }
+
+    //Menu toggling
+    if(buttons.pressed & Button::Y) {
+        if(CURRENT_MENU == MenuState::Logs)
+            CURRENT_MENU = MenuState::None;
+        else
             CURRENT_MENU = MenuState::Logs;
-        }
-        if(show_logs) game::handle_log_input();
+    }
+
+    // If in logs menu, delegate input
+    if(CURRENT_MENU == MenuState::Logs) {
+        game::handle_log_input();
     }
 }

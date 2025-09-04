@@ -47,6 +47,7 @@ namespace game {
         screen.pen = Pen(255,255,255);
         screen.text("Silver Mines", minimal_font, Point(4,4));
         screen.text("TILE_SIZE=" + std::to_string(TILE_SIZE), minimal_font, Point(4,16));
+        screen.text("Menu=" + std::string(menu_state_to_str(CURRENT_MENU)), minimal_font, Point(4,28));
 
         draw_input_debug();
     }
@@ -70,7 +71,7 @@ namespace game {
     }
 
     void draw_logs() {
-        if(!show_logs) return;
+        if(CURRENT_MENU != MenuState::Logs) return;
 
         int panel_w = screen.bounds.w - 20;
         int panel_h = screen.bounds.h - 40;
@@ -144,13 +145,14 @@ namespace game {
     }
 
     void draw_ui(const Map &map, const Camera &cam) {
-        draw_debug_ui();
-
+        
         //-MINIMAP-
+        if(CURRENT_MENU == MenuState::None)
         draw_minimap(map, cam);
         
         //-LOGS-
         draw_logs();
+        draw_debug_ui();
     }
 
 }
