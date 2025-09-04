@@ -6,7 +6,14 @@
 using namespace blit;
 
 namespace game {
-    
+
+    int get_max_log_lines() {
+        int panel_h = screen.bounds.h - 40;
+        int margin = 10;
+        int line_h = 10;
+        return std::max(1, (panel_h - margin * 2) / line_h);
+    }
+
     void draw_input_debug() {
         int size = 10;
         int margin = 3;
@@ -90,49 +97,27 @@ namespace game {
         Point cursor(panel_x + margin, panel_y + margin);
 
         int line_height = 10;
-        int max_lines = (panel_h - margin * 2) / line_height;
+        int max_lines = get_max_log_lines();
 
-        int start_index = std::max(0, int(logs.size()) - max_lines - log_scroll);
+        int total_lines = logs.size();
+        int max_scroll = std::max(0, total_lines - max_lines);
 
-        //logs
-        for(int i = start_index; i < (int)logs.size() - log_scroll; i++) {
-            std::string text = logs[i] + " -";
+        if(log_scroll < 0) log_scroll = 0;
+        if(log_scroll > max_scroll) log_scroll = max_scroll;
 
-            //word wrapping
-            std::string word;
-            int x = cursor.x;
-            for(char c : text) {
-                if(c == ' ') {
-                    //check width
-                    int w = screen.measure_text(word + " ", minimal_font).w;
-                    if (x + w > panel_x + panel_w - margin) {
-                        //wrap
-                        x = cursor.x;
-                        cursor.y += line_height;
-                    }
-                    screen.text(word + " ", minimal_font, Point(x, cursor.y));
-                    x += w;
-                    word.clear();
-                }
-                else
-                    word.push_back(c);
-            }
-            //leftover word
-            if (!word.empty()) {
-                int w = screen.measure_text(word, minimal_font).w;
-                if(x + w > panel_x + panel_w - margin) {
-                    x = cursor.x;
-                    cursor.y += line_height;
-                }
-                screen.text(word, minimal_font, Point(x, cursor.y));
-            }
+        int start_index = log_scroll;
+        int end_index = std::min(total_lines, start_index + max_lines);
+
+
+        //draw text
+        screen.pen = Pen(255,255,255);
+
+        for(int i = start_index; i < end_index; i++) {
+            screen.text(logs[i], minimal_font, cursor);
             cursor.y += line_height;
-            if(cursor.y > panel_y + panel_h - line_height)
-                break;
         }
 
         //scrollbar
-        int total_lines = logs.size();
         if(total_lines > max_lines) {
             float ratio = (float)max_lines / total_lines;
             int bar_h = std::max(10, int(panel_h * ratio));
@@ -152,6 +137,7 @@ namespace game {
         
         //-LOGS-
         draw_logs();
+        
         draw_debug_ui();
     }
 

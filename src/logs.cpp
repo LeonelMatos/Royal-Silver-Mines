@@ -1,5 +1,6 @@
 #include "logs.hpp"
 #include "32blit.hpp"
+#include "ui.hpp"
 #include <algorithm>
 #include <sstream>
 
@@ -35,11 +36,14 @@ namespace game {
     }
 
     void handle_log_input() {
-        if (buttons & Button::DPAD_UP) {
-            if(log_scroll > 0) log_scroll--;
-        }
-        if (buttons & Button::DPAD_DOWN) {
-            if(log_scroll < (int)logs.size()-1) log_scroll++;
-        }
+        int max_lines = get_max_log_lines();
+        int total = (int)logs.size();
+        int max_scroll = std::max(0, total - max_lines);
+
+        if (buttons & Button::DPAD_UP)
+            if(log_scroll > 0) log_scroll = std::max(0, log_scroll - 1);
+
+        if (buttons & Button::DPAD_DOWN)
+            if(log_scroll < (int)logs.size()-1) log_scroll = std::min(max_scroll, log_scroll + 1);
     }
 }
