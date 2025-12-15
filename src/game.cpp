@@ -12,7 +12,7 @@ using namespace game;
 //Basic procedural generated map + camera
 //tile size 12x12
 
-static game::Map world_map(128, 64);
+static game::Map world_map(256, 128);
 static game::Camera cam(0, 0);
 
 void init() {
