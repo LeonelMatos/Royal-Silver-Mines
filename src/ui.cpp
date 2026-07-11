@@ -59,13 +59,30 @@ namespace game {
         draw_input_debug();
     }
 
+    Pen minimap_tile_color(uint8_t tile) {
+        switch(tile) {
+            case TILE_FLOOR: return Pen(90, 90, 90);
+            case TILE_WALL: return Pen(40, 40, 40);
+            case TILE_WOOD: return Pen(120, 70, 30);
+            default: return Pen(0, 0, 0);
+        }
+    }
+
     void draw_minimap(const Map &map, const Camera &cam) {
         const int mm_w = 80;
         const int mm_h = 40;
         const int mm_x = cam.view_w - mm_w - 4;
         const int mm_y = cam.view_h - mm_h - 4;
-        screen.pen = Pen(60,60,60);
-        screen.rectangle(Rect(mm_x, mm_y, mm_w, mm_h));
+
+        //terrain overview sampling the full map
+        for (int py = 0; py < mm_h; py++) {
+            int ty = (py * map.height) / mm_h;
+            for(int px = 0; px < mm_w; px++) {
+                int tx = (px * map.width) / mm_x;
+                screen.pen = minimap_tile_color(map.tile_at(tx, ty));
+                screen.rectangle(Rect(mm_x + px, mm_y + py, 1, 1));
+            }
+        }
 
         float map_px_w = map.width * TILE_SIZE;
         float map_px_h = map.height * TILE_SIZE;

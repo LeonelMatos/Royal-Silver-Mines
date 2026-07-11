@@ -14,6 +14,7 @@ set(PROJECT_SOURCE
     src/logs.hpp
     src/map.cpp
     src/map.hpp
+    src/sprites.hpp
     src/tiles.cpp
     src/tiles.hpp
     src/ui.cpp

@@ -17,6 +17,7 @@ static game::Camera cam(0, 0);
 
 void init() {
     set_screen_mode(ScreenMode::hires);
+    game::load_tileset();
     world_map.generate();
 
     cam = game::Camera(screen.bounds.w, screen.bounds.h);

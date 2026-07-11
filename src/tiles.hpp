@@ -3,7 +3,7 @@
 #include "map.hpp"
 
 namespace game {
-
-void draw_tile(int sx, int sy, uint8_t tile);
-extern const int TILE_SIZE;
+    void load_tileset();
+    void draw_tile(int sx, int sy, uint8_t tile);
+    extern const int TILE_SIZE;
 }
