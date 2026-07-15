@@ -12,7 +12,7 @@ using namespace game;
 //Basic procedural generated map + camera
 //tile size 12x12
 
-static game::Map world_map(256, 128);
+static game::Map world_map(64, 64);
 static game::Camera cam(0, 0);
 
 void init() {
@@ -25,9 +25,7 @@ void init() {
     cam.y = 0;
     
 
-    game::add_log("Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos. " \
-        "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos." \
-    "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.");
+    game::add_log("Once upon a time there was a lovely princess. But she had an enchantment upon her of a fearful sort which could only be broken by love's first kiss. She was locked away in a castle guarded by a terrible fire-breathing dragon. Many brave knigts had attempted to free her from this dreadful prison, but non prevailed. She waited in the dragon's keep in the highest room of the tallest tower for her true love and true love's first kiss. {Laughing} Like that's ever gonna happen. {Paper Rusting, Toilet Flushes} What a load of - Somebody once told me the world is gonna roll me I ain't the sharpest tool in the shed");
 
 }
 
@@ -41,12 +39,19 @@ void render(uint32_t time) {
     int tx1 = (cam.x + cam.view_w) / TILE_SIZE + 1;
     int ty1 = (cam.y + cam.view_h) / TILE_SIZE + 1;
 
+    static int last_tx0 = -1, last_ty0 = -1;
+    if (tx0 != last_tx0 || ty0 != last_ty0) {
+        world_map.reveal(tx0, ty0, tx1, ty1);
+        last_tx0 = tx0;
+        last_ty0 = ty0;
+    }
+
     for(int ty = ty0; ty <= ty1; ty++) {
     for(int tx = tx0; tx <= tx1; tx++) {
         uint8_t t = world_map.tile_at(tx, ty);
         int sx = int(tx * TILE_SIZE - cam.x);
         int sy = int(ty * TILE_SIZE - cam.y);
-        draw_tile(sx, sy, t);
+        draw_tile(sx, sy, t, world_map.is_discovered(tx, ty));
     }
     }
 

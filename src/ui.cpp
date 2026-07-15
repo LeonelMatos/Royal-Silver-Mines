@@ -64,22 +64,50 @@ namespace game {
             case TILE_FLOOR: return Pen(90, 90, 90);
             case TILE_WALL: return Pen(40, 40, 40);
             case TILE_WOOD: return Pen(120, 70, 30);
+            case TILE_GRASS: return Pen(60, 130, 60);
+            case TILE_DIRT: return Pen(110, 90, 60);
             default: return Pen(0, 0, 0);
         }
     }
 
     void draw_minimap(const Map &map, const Camera &cam) {
-        const int mm_w = 80;
-        const int mm_h = 40;
+        #ifdef PICO_BUILD
+            const int mm_w = cam.view_w / 3;
+            const int mm_h = cam.view_h / 3;
+        #else
+            const int mm_w = 80;
+            const int mm_h = 40;
+        #endif
         const int mm_x = cam.view_w - mm_w - 4;
         const int mm_y = cam.view_h - mm_h - 4;
 
         //terrain overview sampling the full map
         for (int py = 0; py < mm_h; py++) {
-            int ty = (py * map.height) / mm_h;
+            int ty0 = (py * map.height) / mm_h;
+            int ty1 = ((py + 1) * map.height) / mm_h;
+            if (ty1 <= ty0) ty1 = ty0 + 1;
+
             for(int px = 0; px < mm_w; px++) {
-                int tx = (px * map.width) / mm_x;
-                screen.pen = minimap_tile_color(map.tile_at(tx, ty));
+                int tx0 = (px * map.width) / mm_w;
+                int tx1 = ((px + 1) * map.width) / mm_w;
+                if (tx1 <= tx0) tx1 = tx0 + 1;
+
+                //scans the whole block this minimap pixel represents
+                bool found_open = false, found_wall = false;
+                uint8_t open_tile = TILE_FLOOR;
+                for (int ty = ty0; ty < ty1; ty++) {
+                    for (int tx = tx0; tx < tx1; tx++) {
+                        if (!map.is_discovered(tx, ty)) continue;
+                        uint8_t t = map.tile_at(tx, ty);
+                        if (t == TILE_WALL) found_wall = true;
+                        else {
+                            found_open = true;
+                            open_tile = t;
+                        }
+                    }
+                }
+
+                screen.pen = found_open ? minimap_tile_color(open_tile) : found_wall ? minimap_tile_color(TILE_WALL) : Pen(0, 0, 0);
                 screen.rectangle(Rect(mm_x + px, mm_y + py, 1, 1));
             }
         }

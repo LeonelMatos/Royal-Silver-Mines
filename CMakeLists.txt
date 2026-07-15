@@ -38,6 +38,11 @@ find_package (32BLIT CONFIG REQUIRED PATHS ../32blit-sdk $ENV{PATH_32BLIT_SDK})
 blit_executable (${PROJECT_NAME} ${PROJECT_SOURCE})
 blit_assets_yaml (${PROJECT_NAME} assets.yml)
 blit_metadata (${PROJECT_NAME} metadata.yml)
+
+if(PICO_BOARD)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE ALLOW_HIRES=0 PICO_BUILD_1)
+endif()
+
 add_custom_target (flash DEPENDS ${PROJECT_NAME}.flash)
 
 # setup release packages
