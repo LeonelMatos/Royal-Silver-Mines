@@ -79,8 +79,9 @@ jobs:
     - name: Install Linux deps
       if: runner.os == 'Linux'
       run: |
-        sudo apt update && sudo apt install ${{matrix.apt-packages}}
-        pip3 install 32blit
+        sudo apt update && sudo apt install ${{matrix.apt-packages}} pipx
+        pipx install 32blit
+        pipx ensurepath
 
     # MacOS dependencies
     - name: Install macOS deps
@@ -94,7 +95,7 @@ jobs:
       if: runner.os == 'Windows'
       shell: bash
       run: |
-        python -m pip install 32blit
+        python -m pip install --user 32blit --break-system-packages || python -m pip install --user 32blit
 
     # Emscripten SDK setup
     - name: Setup Emscripten cache
@@ -124,7 +125,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       working-directory: ${{runner.workspace}}/main/build
-      run: ${{matrix.cmake-prefix}} cmake $GITHUB_WORKSPACE/main -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCPACK_PACKAGE_FILE_NAME=${{env.RELEASE_FILE}} ${{matrix.cmake-args}}
+      run: ${{matrix.cmake-prefix}} cmake $GITHUB_WORKSPACE/main -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCPACK_PACKAGE_FILE_NAME=${{env.RELEASE_FILE}} ${{matrix.cmake-args}}
 
     # And then run the build itself
     - name: Build

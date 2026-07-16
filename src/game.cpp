@@ -51,7 +51,7 @@ void render(uint32_t time) {
         uint8_t t = world_map.tile_at(tx, ty);
         int sx = int(tx * TILE_SIZE - cam.x);
         int sy = int(ty * TILE_SIZE - cam.y);
-        draw_tile(sx, sy, t, world_map.is_discovered(tx, ty));
+        draw_tile(sx, sy, tx, ty, t, world_map.is_discovered(tx, ty));
     }
     }
 

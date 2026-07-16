@@ -9,7 +9,8 @@ void Map::generate() {
     //generation params
     static const int FILL_PROB = 60; //def:45 for wide
     static const int SMOOTH_ITERS = 5;
-    static const int SURFACE_ROWS = 14; //grass yard above the entrance
+    static const int SURFACE_ROWS = 14; //baseline entrance level
+    static const int CAVE_START = SURFACE_ROWS + 4;
 
     std::random_device rd;
     std::mt19937 rng(rd());
@@ -17,17 +18,29 @@ void Map::generate() {
     
     int entrance_x = width / 2;
 
-    for (int y = 0; y < SURFACE_ROWS && y < height; y++) {
-        for (int x = 0; x < width; x++) {
+    //ondulating ground line
+    std::vector<int> ground_level(width);
+    int level = SURFACE_ROWS;
+    for (int x = 0; x < width; x++) {
+        if (dist(rng) < 25) level += (dist(rng) < 50) ? -1 : 1;
+        level = std::max(SURFACE_ROWS - 3, std::min(SURFACE_ROWS + 3, level));
+        ground_level[x] = level;
+    }
+    //surface, grass under ondulating line, with dirt path
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < ground_level[x] && y < height; y++) {
             data[y * width + x] = TILE_GRASS;
         }
-        for (int x = entrance_x - 1; x <= entrance_x + 1; x++) {
-            if (x >= 0 && x < width) data[y * width + x] = TILE_DIRT;
+    }
+    for (int x = entrance_x - 1; x <= entrance_x + 1; x++) {
+        if (x < 0 || x >= width) continue;
+        for (int y = 0; y < ground_level[x] && y < height; y++) {
+            data[y * width + x] = TILE_DIRT;
         }
     }
 
     //random fill for underground
-    for (int y = 1; y < height; y++) {
+    for (int y = CAVE_START + 1; y < height; y++) {
         for (int x = 1; x < width -1; x++) {
             int i = y * width + x;
             data[i] = (dist(rng) < FILL_PROB) ? TILE_WALL : TILE_FLOOR;
@@ -37,7 +50,7 @@ void Map::generate() {
     //smooth cellular automata
     for(int iter = 0; iter < SMOOTH_ITERS; iter++) {
         std::vector<uint8_t> next = data;
-        for (int y = 1; y < height - 1; y++) {
+        for (int y = CAVE_START + 1; y < height - 1; y++) {
             for (int x = 1; x < width - 1; x++) {
                 int walls = 0;
                 for (int oy = -1; oy <= 1; oy++) {
@@ -56,26 +69,26 @@ void Map::generate() {
 
     //enforce solid borders
     for (int x = 0; x < width; x++) {
-        data[SURFACE_ROWS * width + x] = TILE_WALL;
+        data[CAVE_START * width + x] = TILE_WALL;
         data[(height - 1) * width + x] = TILE_WALL;
     }
-    for (int y = SURFACE_ROWS; y < height; y++) {
+    for (int y = CAVE_START; y < height; y++) {
         data[y * width] = TILE_WALL;
         data[y * width + (width-1)] = TILE_WALL;
     }
 
     //entrance shaft
-    for (int y = 0; y < 8 && (SURFACE_ROWS + y) < height; y++)
-        data[(SURFACE_ROWS + y) * width + entrance_x] = TILE_FLOOR;
-    for (int y = 0; y < 4 && (SURFACE_ROWS + 8 + y) < height; y++)
-        data[(SURFACE_ROWS + 8 + y) * width + entrance_x] = TILE_WOOD;
+    for (int y = 0; y < 8 && (CAVE_START + y) < height; y++)
+        data[(CAVE_START + y) * width + entrance_x] = TILE_FLOOR;
+    for (int y = 0; y < 4 && (CAVE_START + 8 + y) < height; y++)
+        data[(CAVE_START + 8 + y) * width + entrance_x] = TILE_WOOD;
 
     //entrance pre-explored/discovered
     discovered.assign(width * height, 0);
-    for (int y = 0; y < 8 && (SURFACE_ROWS + y) < height; y++)
-        discovered[(SURFACE_ROWS + y) * width + entrance_x] = 1;
-    for (int y = 0; y < 4 && (SURFACE_ROWS + 8 + y) < height; y++)
-        discovered[(SURFACE_ROWS + 8 + y) * width + entrance_x] = 1;
+    for (int y = 0; y < 8 && (CAVE_START + y) < height; y++)
+        discovered[(CAVE_START + y) * width + entrance_x] = 1;
+    for (int y = 0; y < 4 && (CAVE_START + 8 + y) < height; y++)
+        discovered[(CAVE_START + 8 + y) * width + entrance_x] = 1;
         
 }
 

@@ -4,6 +4,6 @@
 
 namespace game {
     void load_tileset();
-    void draw_tile(int sx, int sy, uint8_t tile, bool discovered);
+    void draw_tile(int sx, int sy, int tx, int ty, uint8_t tile, bool discovered);
     extern const int TILE_SIZE;
 }
