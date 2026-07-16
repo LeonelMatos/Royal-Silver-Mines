@@ -1,9 +1,14 @@
 #include "map.hpp"
-#include <random>
+#include "32blit.hpp"
 
 namespace game {
 
 Map::Map(int w, int h) : width(w), height(h), data(w * h, TILE_WALL), discovered(w * h, 0) {}
+
+//0-99 roll, replaces dist(rng)
+static inline int roll() {
+    return blit::random() % 100;
+}
 
 void Map::generate() {
     //generation params
@@ -11,10 +16,6 @@ void Map::generate() {
     static const int SMOOTH_ITERS = 5;
     static const int SURFACE_ROWS = 14; //baseline entrance level
     static const int CAVE_START = SURFACE_ROWS + 4;
-
-    std::random_device rd;
-    std::mt19937 rng(rd());
-    std::uniform_int_distribution<int> dist(0, 99);
     
     int entrance_x = width / 2;
 
@@ -22,7 +23,7 @@ void Map::generate() {
     std::vector<int> ground_level(width);
     int level = SURFACE_ROWS;
     for (int x = 0; x < width; x++) {
-        if (dist(rng) < 25) level += (dist(rng) < 50) ? -1 : 1;
+        if (roll() < 25) level += (roll() < 50) ? -1 : 1;
         level = std::max(SURFACE_ROWS - 3, std::min(SURFACE_ROWS + 3, level));
         ground_level[x] = level;
     }
@@ -43,7 +44,7 @@ void Map::generate() {
     for (int y = CAVE_START + 1; y < height; y++) {
         for (int x = 1; x < width -1; x++) {
             int i = y * width + x;
-            data[i] = (dist(rng) < FILL_PROB) ? TILE_WALL : TILE_FLOOR;
+            data[i] = (roll() < FILL_PROB) ? TILE_WALL : TILE_FLOOR;
         }
     }
     
