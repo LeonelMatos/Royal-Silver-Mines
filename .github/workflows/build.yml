@@ -40,7 +40,7 @@ jobs:
           - os: ubuntu-22.04
             name: PicoSystem
             release-suffix: PICOSYSTEM
-            cmake-args: -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/32blit-sdk/pico.toolchain -DPICO_BOARD=pimoroni_picosystem -DPICO_SDK_FETCH_FROM_GIT=true -DPICO_EXTRAS_FETCH_FROM_GIT=true
+            cmake-args: -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/32blit-sdk/pico.toolchain -DPICO_BOARD=pimoroni_picosystem -DPICO_SDK_PATH=$GITHUB_WORKSPACE/pico-sdk -DPICO_EXTRAS_PATH=$GITHUB_WORKSPACE/pico-extras
             apt-packages: gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib python3-setuptools
             release: true
 
@@ -82,6 +82,22 @@ jobs:
       with:
         repository: 32blit/32blit-sdk
         path: 32blit-sdk
+
+    - name: Checkout Pico SDK
+      if: matrix.name == 'PicoSystem'
+      uses: actions/checkout@v4
+      with:
+        repository: raspberrypi/pico-sdk
+        path: pico-sdk
+        submodules: recursive
+
+    - name: Checkout Pico Extras
+      if: matrix.name == 'PicoSystem'
+      uses: actions/checkout@v4
+      with:
+        repository: raspberrypi/pico-extras
+        path: pico-extras
+        submodules: recursive
 
     - name: Setup Python
       if: runner.os == 'Windows'
