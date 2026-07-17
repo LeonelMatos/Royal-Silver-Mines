@@ -115,7 +115,7 @@ void update(uint32_t time) {
         case MenuState::Selecting:
             game::handle_cursor_input(cam, world_map);
             if(buttons.pressed & Button::A)
-                game::selection_confirm(world_map);
+                game::selection_confirm(world_map, cam);
             break;
         case MenuState::Inspecting:
             game::handle_cursor_input(cam, world_map);

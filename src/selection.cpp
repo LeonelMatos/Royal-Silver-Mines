@@ -64,7 +64,7 @@ namespace {
     }
 }
 
-void selection_confirm(Map &map) {
+void selection_confirm(Map &map, const Camera &cam) {
     if(is_area_action(pending_action)) {
         if(!anchor_set) {
             anchor = cursor;
@@ -82,6 +82,13 @@ void selection_confirm(Map &map) {
     else {
         apply_action_at(map, pending_action, cursor.x, cursor.y);
     }
+
+    //re-triggers reveal() map after applying the selections stuff
+    int tx0 = int(cam.x) / TILE_SIZE;
+    int ty0 = int(cam.y) / TILE_SIZE;
+    int tx1 = int(cam.x + cam.view_w) / TILE_SIZE + 1;
+    int ty1 = int(cam.y + cam.view_h) / TILE_SIZE + 1;
+    map.reveal(tx0, ty0, tx1, ty1);
 }
 
 //returns true when nothing pending, returns to menu

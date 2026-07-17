@@ -17,7 +17,7 @@ void selection_enter(const Camera &cam);
 void handle_cursor_input(Camera &cam, const Map &map);
 
 //A-button pressed while Selecting
-void selection_confirm(Map &map);
+void selection_confirm(Map &map, const Camera &cam);
 
 //Y-button pressed while Selecting
 bool selection_cancel();
