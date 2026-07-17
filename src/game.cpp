@@ -5,12 +5,12 @@
 #include "ui.hpp"
 #include "logs.hpp"
 #include "menu.hpp"
+#include "selection.hpp"
 
 using namespace blit;
 
 using namespace game;
 
-//Basic procedural generated map + camera
 //tile size 12x12
 
 static game::Map world_map(128, 128);
@@ -72,6 +72,7 @@ void update(uint32_t time) {
             CURRENT_MENU = MenuState::Menu;
         }
         if (buttons.pressed & Button::B) {
+            game::selection_enter(cam);
             CURRENT_MENU = MenuState::Inspecting;
         }
     }
@@ -81,10 +82,13 @@ void update(uint32_t time) {
                 if(game::menu_go_back())
                     CURRENT_MENU = MenuState::None;
                 break;
-            case MenuState::Selecting: 
-                game::cancel_pending_action();
-                CURRENT_MENU = MenuState::None;
+            case MenuState::Selecting: {
+                if(game::selection_cancel()) {
+                    game::cancel_pending_action();
+                    CURRENT_MENU = MenuState::None;
+                }   
                 break;
+            }
             case MenuState::Inspecting:
                 CURRENT_MENU = MenuState::None;
                 break;
@@ -102,13 +106,19 @@ void update(uint32_t time) {
             game::MenuResult r = game::handle_menu_input();
             if (r == game::MenuResult::OpenLogs)
                 CURRENT_MENU = MenuState::Logs;
-            else if (r == game::MenuResult::ActionChosen)
+            else if (r == game::MenuResult::ActionChosen) {
+                game::selection_enter(cam);
                 CURRENT_MENU = MenuState::Selecting;
+            }
             break;
         }
         case MenuState::Selecting:
+            game::handle_cursor_input(cam, world_map);
+            if(buttons.pressed & Button::A)
+                game::selection_confirm(world_map);
             break;
         case MenuState::Inspecting:
+            game::handle_cursor_input(cam, world_map);
             break;
         case MenuState::Logs:
             game::handle_log_input();

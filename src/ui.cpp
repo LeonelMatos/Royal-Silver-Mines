@@ -3,6 +3,7 @@
 #include "tiles.hpp"
 #include "logs.hpp"
 #include "menu.hpp"
+#include "selection.hpp"
 
 using namespace blit;
 
@@ -176,11 +177,17 @@ namespace game {
     }
 
     void draw_ui(const Map &map, const Camera &cam) {
-        
-        //-MINIMAP-
         if(CURRENT_MENU == MenuState::None)
-        draw_minimap(map, cam);
+            draw_minimap(map, cam);
         
+        if(CURRENT_MENU == MenuState::Selecting || CURRENT_MENU == MenuState::Inspecting)
+            draw_selection_cursor(cam);
+        
+        if(CURRENT_MENU == MenuState::Inspecting) {
+            screen.pen = Pen(255, 255, 255);
+            screen.text(std::string("Inspect: ") + inspect_label(map), minimal_font, Point(4, screen.bounds.h - 14));
+        }
+
         draw_menu();
         draw_logs();
         draw_debug_ui();

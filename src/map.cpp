@@ -98,6 +98,11 @@ uint8_t Map::tile_at(int x, int y) const {
     return data[y * width + x];
 }
 
+void Map::set_tile(int x, int y, uint8_t tile) {
+    if(x < 0 || y < 0 || x >= width || y >= height) return;
+    data[y * width + x] = tile;
+}
+
 bool Map::is_discovered(int x, int y) const {
     if (x < 0 || y < 0 || x >= width || y >= height) return false;
     uint8_t t = data[y * width + x];

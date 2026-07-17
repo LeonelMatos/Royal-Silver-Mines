@@ -8,6 +8,7 @@ struct Camera {
 
     Camera(int vw, int vh);
     void move(float dx, float dy, int map_px_w, int map_px_h);
+    void ensure_visible(float px, float py, float margin, int map_px_w, int map_px_h);
 };
 
 }

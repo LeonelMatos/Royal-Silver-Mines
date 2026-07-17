@@ -23,6 +23,8 @@ set(PROJECT_SOURCE
     src/logs.hpp
     src/menu.cpp
     src/menu.hpp
+    src/selection.cpp
+    src/selection.hpp
     )
 
 # ... and any other files you want in the release here

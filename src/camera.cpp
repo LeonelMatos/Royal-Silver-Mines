@@ -17,4 +17,25 @@ void Camera::move(float dx, float dy, int map_px_w, int map_px_h) {
     if(x > max_x) x = max_x;
     if(y > max_y) y = max_y;
 }
+
+void Camera::ensure_visible(float px, float py, float margin, int map_px_w, int map_px_h) {
+    if(px - x < margin)
+        x = px - margin;
+    if(px - x > view_w - margin)
+        x = px - (view_w - margin);
+    if(py - y < margin)
+        y = py - margin;
+    if(py - y > view_h - margin)
+        y = py - (view_h - margin);
+    
+    float max_x = map_px_w - view_w;
+    float max_y = map_px_h - view_h;
+    if(x < 0) x = 0;
+    if(y < 0) y = 0;
+    if(max_x < 0) max_x = 0;
+    if(max_y < 0) max_y = 0;
+    if(x > max_x) x = max_x;
+    if(y > max_y) y = max_y;
+}
+
 }
