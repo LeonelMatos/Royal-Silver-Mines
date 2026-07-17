@@ -21,6 +21,8 @@ set(PROJECT_SOURCE
     src/ui.hpp
     src/logs.cpp
     src/logs.hpp
+    src/menu.cpp
+    src/menu.hpp
     )
 
 # ... and any other files you want in the release here

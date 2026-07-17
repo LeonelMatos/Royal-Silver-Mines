@@ -4,6 +4,7 @@
 #include "tiles.hpp"
 #include "ui.hpp"
 #include "logs.hpp"
+#include "menu.hpp"
 
 using namespace blit;
 
@@ -66,18 +67,52 @@ void update(uint32_t time) {
         if(pressed(Button::DPAD_UP))    cam.move(0, -cam.speed, world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
         if(pressed(Button::DPAD_DOWN))  cam.move(0, cam.speed,  world_map.width * TILE_SIZE, world_map.height * TILE_SIZE);
         
+        if (buttons.pressed & Button::X) {
+            game::open_menu();
+            CURRENT_MENU = MenuState::Menu;
+        }
+        if (buttons.pressed & Button::B) {
+            CURRENT_MENU = MenuState::Inspecting;
+        }
+    }
+    if (buttons.pressed & Button::Y) {
+        switch(CURRENT_MENU) {
+            case MenuState::Menu:
+                if(game::menu_go_back())
+                    CURRENT_MENU = MenuState::None;
+                break;
+            case MenuState::Selecting: 
+                game::cancel_pending_action();
+                CURRENT_MENU = MenuState::None;
+                break;
+            case MenuState::Inspecting:
+                CURRENT_MENU = MenuState::None;
+                break;
+            case MenuState::Logs:
+                CURRENT_MENU = MenuState::None;
+                break;
+            default: break;
+        }
     }
 
-    //Menu toggling
-    if(buttons.pressed & Button::Y) {
-        if(CURRENT_MENU == MenuState::Logs)
-            CURRENT_MENU = MenuState::None;
-        else
-            CURRENT_MENU = MenuState::Logs;
-    }
-
-    // If in logs menu, delegate input
-    if(CURRENT_MENU == MenuState::Logs) {
-        game::handle_log_input();
+    switch(CURRENT_MENU) {
+        case MenuState::None:
+            break;
+        case MenuState::Menu: {
+            game::MenuResult r = game::handle_menu_input();
+            if (r == game::MenuResult::OpenLogs)
+                CURRENT_MENU = MenuState::Logs;
+            else if (r == game::MenuResult::ActionChosen)
+                CURRENT_MENU = MenuState::Selecting;
+            break;
+        }
+        case MenuState::Selecting:
+            break;
+        case MenuState::Inspecting:
+            break;
+        case MenuState::Logs:
+            game::handle_log_input();
+            break;
+        default: break;
     }
 }

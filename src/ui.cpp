@@ -2,6 +2,7 @@
 #include "32blit.hpp"
 #include "tiles.hpp"
 #include "logs.hpp"
+#include "menu.hpp"
 
 using namespace blit;
 
@@ -180,9 +181,8 @@ namespace game {
         if(CURRENT_MENU == MenuState::None)
         draw_minimap(map, cam);
         
-        //-LOGS-
+        draw_menu();
         draw_logs();
-        
         draw_debug_ui();
     }
 
