@@ -94,9 +94,7 @@ bool selection_cancel() {
 }
 
 std::string inspect_label(const Map &map) {
-    const auto &info = tile_sprite_info(map.tile_at(cursor.x, cursor.y));
-    if(!info.has_sprite) return "Empty";
-    return humanize_token(sprites::NAMES[(size_t)info.sprite]);
+    return describe_tile(map, cursor.x, cursor.y);
 }
 
 void draw_selection_cursor(const Camera &cam) {

@@ -1,22 +1,9 @@
 #include "tile_sprites.hpp"
-#include "map.hpp"
+#include "tile_decor.hpp"
+#include "sprite_names.hpp"
 #include <cctype>
 
 namespace game {
-
-const TileSpriteInfo& tile_sprite_info(uint8_t tile) {
-    static const TileSpriteInfo floor_info = { true, sprites::SpriteID::ROCK_FLOOR };
-    static const TileSpriteInfo wall_info  = { true, sprites::SpriteID::BRICK_WALL };
-    static const TileSpriteInfo wood_info  = { true, sprites::SpriteID::WOOD_TIMBER };
-    static const TileSpriteInfo empty_info = { false, sprites::SpriteID::COUNT };
-
-    switch (tile) {
-        case TILE_FLOOR: return floor_info;
-        case TILE_WALL:  return wall_info;
-        case TILE_WOOD:  return wood_info;
-        default:         return empty_info;
-    }
-}
 
 std::string humanize_token(const char *token) {
     std::string out;
@@ -28,6 +15,28 @@ std::string humanize_token(const char *token) {
         else out += (char)std::tolower((unsigned char)c);
     }
     return out;
+}
+
+static std::string name_of(sprites::SpriteID id) {
+    return humanize_token(sprites::NAMES[(size_t)id]);
+}
+
+std::string describe_tile(const Map &map, int tx, int ty) {
+    switch (map.tile_at(tx, ty)) {
+        case TILE_FLOOR: return name_of(sprite_for_floor());
+        case TILE_WALL:  return name_of(sprite_for_wall());
+        case TILE_WOOD:  return "Wood support"; // flat-colour tile, no sprite backing it yet
+        case TILE_GRASS: {
+            GrassDecoration d = grass_decoration_at(tx, ty);
+            if (d.has_feature) return name_of(d.feature);
+            if (d.has_tuft)    return name_of(d.tuft);
+            return name_of(d.background);
+        }
+        case TILE_DIRT:
+            return name_of(dirt_variant_at(tx, ty));
+        default:
+            return "Empty";
+    }
 }
 
 }

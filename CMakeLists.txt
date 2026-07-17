@@ -27,6 +27,8 @@ set(PROJECT_SOURCE
     src/menu.hpp
     src/selection.cpp
     src/selection.hpp
+    src/tile_decor.cpp
+    src/tile_decor.hpp
     )
 
 # ... and any other files you want in the release here

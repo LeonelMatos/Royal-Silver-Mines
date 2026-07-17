@@ -1,20 +1,14 @@
 #pragma once
 #include <cstdint>
 #include <string>
-#include "sprites.hpp"
-#include "sprite_names.hpp"
+#include "map.hpp"
 
 namespace game {
 
-struct TileSpriteInfo {
-    bool has_sprite;
-    sprites::SpriteID sprite;
-};
+std::string humanize_token(const char *token); // "ROCK_FLOOR" -> "Rock Floor"
 
-//Single source of info: which sprite represents each Tile
-const TileSpriteInfo& tile_sprite_info(uint8_t tile);
-
-//"ROCK_FLOOR" → "Rock Floor"
-std::string humanize_token(const char *token);
+// Describes exactly what's rendered at (tx, ty) - pulls from the same
+// tile_decor functions tiles.cpp uses, so it can't drift from the render.
+std::string describe_tile(const Map &map, int tx, int ty);
 
 }
