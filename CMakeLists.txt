@@ -15,6 +15,8 @@ set(PROJECT_SOURCE
     src/map.cpp
     src/map.hpp
     src/sprites.hpp
+    src/tile_sprites.cpp
+    src/tile_sprites.hpp
     src/tiles.cpp
     src/tiles.hpp
     src/ui.cpp
@@ -38,10 +40,25 @@ else()
 endif()
 
 find_package (32BLIT CONFIG REQUIRED PATHS ../32blit-sdk $ENV{PATH_32BLIT_SDK})
+find_package (Python3 COMPONENTS Interpreter REQUIRED)
 
 blit_executable (${PROJECT_NAME} ${PROJECT_SOURCE})
 blit_assets_yaml (${PROJECT_NAME} assets.yml)
 blit_metadata (${PROJECT_NAME} metadata.yml)
+
+# Generate src/sprite_names.hpp from src/sprites.hpp - reruns automatically
+# whenever sprites.hpp changes (e.g. after re-exporting from the Sprite Atlas
+# Workbench), so the name table never needs manual upkeep.
+add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/src/sprite_names.hpp
+    COMMAND Python3::Interpreter ${CMAKE_SOURCE_DIR}/tools/gen_sprite_names.py
+            ${CMAKE_SOURCE_DIR}/src/sprites.hpp
+            ${CMAKE_SOURCE_DIR}/src/sprite_names.hpp
+    DEPENDS ${CMAKE_SOURCE_DIR}/src/sprites.hpp ${CMAKE_SOURCE_DIR}/tools/gen_sprite_names.py
+    COMMENT "Generating sprite_names.hpp from sprites.hpp"
+)
+add_custom_target(generate_sprite_names DEPENDS ${CMAKE_SOURCE_DIR}/src/sprite_names.hpp)
+add_dependencies(${PROJECT_NAME} generate_sprite_names)
 
 if(PICO_BOARD)
   target_compile_definitions(${PROJECT_NAME} PRIVATE ALLOW_HIRES=0 PICO_BUILD_1)

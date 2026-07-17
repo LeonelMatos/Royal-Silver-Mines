@@ -2,6 +2,8 @@
 #include "32blit.hpp"
 #include "tiles.hpp"
 #include "logs.hpp"
+#include "tile_sprites.hpp"
+#include "sprite_names.hpp"
 #include <algorithm>
 
 using namespace blit;
@@ -91,13 +93,10 @@ bool selection_cancel() {
     return true;
 }
 
-const char* inspect_label(const Map &map) {
-    switch(map.tile_at(cursor.x, cursor.y)) {
-        case TILE_FLOOR: return "Floor";
-        case TILE_WALL: return "Wall";
-        case TILE_WOOD: return "Wood support";
-        default: return "Empty";
-    }
+std::string inspect_label(const Map &map) {
+    const auto &info = tile_sprite_info(map.tile_at(cursor.x, cursor.y));
+    if(!info.has_sprite) return "Empty";
+    return humanize_token(sprites::NAMES[(size_t)info.sprite]);
 }
 
 void draw_selection_cursor(const Camera &cam) {

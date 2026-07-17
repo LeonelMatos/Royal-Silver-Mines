@@ -2,7 +2,7 @@
 #include "32blit.hpp"
 
 //Global debug flag
-inline constexpr bool DEBUG = true;
+inline constexpr bool DEBUG = false;
 
 enum class MenuState{
     None,

@@ -23,7 +23,7 @@ void selection_confirm(Map &map);
 bool selection_cancel();
 
 //tile name under cursor
-const char* inspect_label(const Map &map);
+std::string inspect_label(const Map &map);
 
 //rectangle preview
 void draw_selection_cursor(const Camera &cam);
