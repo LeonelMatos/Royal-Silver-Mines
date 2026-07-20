@@ -12,7 +12,7 @@ static inline int roll() {
 
 void Map::generate() {
     //generation params
-    static const int FILL_PROB = 60; //def:45 for wide
+    static const int FILL_PROB = 67; //def:45 for wide
     static const int SMOOTH_ITERS = 5;
     static const int SURFACE_ROWS = 14; //baseline entrance level
     static const int CAVE_START = SURFACE_ROWS + 4;
@@ -90,6 +90,26 @@ void Map::generate() {
         discovered[(CAVE_START + y) * width + entrance_x] = 1;
     for (int y = 0; y < 4 && (CAVE_START + 8 + y) < height; y++)
         discovered[(CAVE_START + 8 + y) * width + entrance_x] = 1;
+
+    //frontier tiles bordering the surface, visible from outside
+    static const int fx[4] = {1, -1, 0, 0};
+    static const int fy[4] = {0, 0, 1, -1};
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            uint8_t t = data[y * width + x];
+            if(t == TILE_GRASS || t == TILE_DIRT) continue;
+            for (int d = 0; d < 4; d++) {
+                int nx = x + fx[d], ny = y + fy[d];
+                if(nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+                uint8_t nt = data[ny * width + nx];
+                if(nt == TILE_GRASS || nt == TILE_DIRT) {
+                    discovered[y * width + x] = 1;
+                    break;
+                }
+            }
+        }
+    }
         
 }
 
